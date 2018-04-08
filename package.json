@@ -2,6 +2,7 @@
   "name": "hubot-rocketchat-rotation",
   "version": "0.1.0",
   "author": "Otsuki Hitoshi <hitochan777@gmail.com>",
+  "license": "MIT",
   "description": "A simple bot for role rotation such as a facilitator in morning meeting",
   "dependencies": {
     "hubot": "^2.19.0",
@@ -19,9 +20,11 @@
     "hubot-shipit": "^0.2.1"
   },
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "clean": "rimraf .rpt2_cache"
   },
   "devDependencies": {
+    "rimraf": "^2.6.2",
     "rollup": "^0.57.1",
     "rollup-plugin-typescript2": "^0.12.0",
     "typescript": "^2.8.1"
