@@ -20,8 +20,8 @@
     "hubot-shipit": "^0.2.1"
   },
   "scripts": {
-    "build": "rollup -c",
-    "clean": "rimraf .rpt2_cache"
+    "build": "rimraf .rpt2_cache && rollup -c",
+    "test": "jest --no-cache"
   },
   "devDependencies": {
     "rimraf": "^2.6.2",
