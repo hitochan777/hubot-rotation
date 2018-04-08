@@ -3,3 +3,4 @@ node_modules
 .hubot_history
 *.js
 .rpt2_cache/
+yarn-error.log
