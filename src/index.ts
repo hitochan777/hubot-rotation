@@ -5,8 +5,8 @@ import * as hubot from "hubot"
 interface Repository {
   shiftUser: (roomName: string) => void
   getCurrentUser: (roomName: string) => void
-  addMember: (roomName, username: string) => void
-  deleteMember: (roomName, username: string) => void
+  addMember: (roomName: string, username: string) => void
+  deleteMember: (roomName: string, username: string) => void
 }
 
 export class RedisRepository implements Repository {

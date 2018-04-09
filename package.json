@@ -22,7 +22,7 @@
   "scripts": {
     "build": "rimraf .rpt2_cache && rollup -c",
     "test": "jest --no-cache",
-    "format": "prettier --write src/**/*.{ts,tsx}"
+    "format": "prettier --write src/**/*.{ts,tsx,js}"
   },
   "devDependencies": {
     "@types/jest": "^22.2.2",
@@ -37,7 +37,10 @@
   },
   "jest": {
     "globals": {
-      "ts-jest": {}
+      "ts-jest": {
+        "enableTsDiagnostics": true,
+        "tsConfigFile": "./tsconfig.json"
+      }
     },
     "moduleFileExtensions": [
       "ts",
@@ -50,12 +53,10 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testRegex": ".*\\.(test|spec)\\.tsx?$",
     "collectCoverageFrom": [
       "src/**/*.ts",
-      "!src/**/*.spec.ts",
-      "src/**/*.tsx",
-      "!src/**/*.spec.tsx"
+      "!src/**/*.spec.ts"
     ]
   },
   "prettier": {
