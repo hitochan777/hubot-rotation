@@ -2,6 +2,10 @@
     "compileOptions": {
         "module": "es6",
         "target": "es5",
+        "module": "node",
         "noImplicitAny": true
-    }
+    },
+    "exclude": [
+        "node_modules/**/*"
+    ]
 }

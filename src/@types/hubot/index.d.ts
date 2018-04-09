@@ -1,36 +1,36 @@
 // @format
 
-declare module 'hubot' {
+declare module "hubot" {
   export interface Robot {
     hear(
       regex: RegExp,
-      options: {[key: string]: any} | Function,
-      callback?: (res: Response) => void,
-    ): void;
+      options: { [key: string]: any } | Function,
+      callback?: (res: Response) => void
+    ): void
     brain: {
-      get(key: string): any;
-      set(key: string, val: any): void;
-    };
+      get(key: string): any
+      set(key: string, val: any): void
+    }
   }
 
   export interface Response {
-    match: [string, string, {index: number}, {input: string}];
-    reply(...msg: string[]): void;
+    match: [string, string, { index: number }, { input: string }]
+    reply(...msg: string[]): void
     envelope: {
-      room: string;
+      room: string
       user: {
-        id: string;
-        name: string;
-        email_address: string;
-        room: string;
-      };
+        id: string
+        name: string
+        email_address: string
+        room: string
+      }
       message: {
-        user: any;
-        text: string;
-        id: string;
-        done: boolean;
-        room: string;
-      };
-    };
+        user: any
+        text: string
+        id: string
+        done: boolean
+        room: string
+      }
+    }
   }
 }
