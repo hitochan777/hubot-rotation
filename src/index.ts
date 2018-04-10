@@ -1,4 +1,5 @@
 // @format
+/// <reference path="@types/hubot/index.d.ts" />
 
 import * as hubot from "hubot"
 
