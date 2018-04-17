@@ -39,6 +39,8 @@ jobs:
       - run:
           name: set npm config
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - run: yarn install
+      - run: yarn build
       - run:
           name: release to npm
           command: npm publish
