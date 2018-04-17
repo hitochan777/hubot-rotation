@@ -5,7 +5,7 @@ import * as hubot from "hubot"
 
 interface Repository {
   shiftUser: (roomName: string) => void
-  getCurrentUser: (roomName: string) => void
+  getCurrentUser: (roomName: string) => string
   addMember: (roomName: string, username: string) => void
   deleteMember: (roomName: string, username: string) => void
   getAllUsers: (roomName: string) => string[]
@@ -14,8 +14,15 @@ interface Repository {
 export class RedisRepository implements Repository {
   private robot: hubot.Robot
 
-  constructor(robot: hubot.Robot) {
+  constructor(
+    robot: hubot.Robot,
+    rooms: { [key: string]: { members: string[]; index: number } } = {}
+  ) {
     this.robot = robot
+    for (let [roomName, room] of Object.entries(rooms)) {
+      this.robot.brain.set(`rotate:${roomName}:members`, room.members)
+      this.robot.brain.set(`rotate:${roomName}:index`, room.index)
+    }
   }
 
   shiftUser(roomName: string) {
