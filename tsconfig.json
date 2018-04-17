@@ -2,6 +2,9 @@
     "compilerOptions": {
         "module": "es6",
         "target": "es5",
-        "noImplicitAny": true
+        "noImplicitAny": true,
+        "lib": [
+            "es2017"
+        ]
     }
 }

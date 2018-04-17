@@ -38,7 +38,6 @@ export class RedisRepository implements Repository {
   getCurrentUser(roomName: string) {
     const currentMemberIndex = this.getCurrentIndex(roomName)
     const members = this.getAllUsers(roomName)
-    this.robot.brain.get(`rotate:${roomName}:members`) || []
     if (currentMemberIndex < 0) {
       throw new Error("There is no member yet")
     }
@@ -63,10 +62,21 @@ export class RedisRepository implements Repository {
     }
     members.splice(userIndex, 1)
     this.robot.brain.set(`rotate:${roomName}:members`, members)
+    const currentIndex = this.getCurrentIndex(roomName)
+    if (userIndex === currentIndex) {
+      this.robot.brain.set(
+        `rotate:${roomName}:index`,
+        currentIndex % members.length
+      )
+    } else {
+      this.robot.brain.set(`rotate:${roomName}:index`, members)
+      this.robot.brain.set(`rotate:${roomName}:index`, currentIndex - 1)
+    }
   }
 
-  private getCurrentIndex(roomName: string) {
-    return +this.robot.brain.get(`rotate:${roomName}:index`) || -1
+  private getCurrentIndex(roomName: string): number {
+    const index = +this.robot.brain.get(`rotate:${roomName}:index`)
+    return index === undefined ? -1 : index
   }
 
   getAllUsers(roomName: string) {

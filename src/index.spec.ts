@@ -9,16 +9,29 @@ import { RedisRepository } from "./index"
 describe("redis repository", () => {
   let robot: hubot.Robot
   beforeEach(() => {
-    const members = []
-    const index = -1
-    robot = { hear() {}, brain: { get() {}, set() {} } }
+    const data: { [key: string]: any } = {}
+    robot = {
+      hear() {
+        throw new Error("not implemented")
+      },
+      brain: {
+        get(key: string) {
+          return data[key]
+        },
+        set(key: string, value: any) {
+          data[key] = value
+        }
+      }
+    }
   })
+
   it("moves the pointer to next user", () => {
     const roomName = "test room"
     const initialMembers = ["user1", "user2", "user3"]
     const rr = new RedisRepository(robot, {
       [roomName]: { members: initialMembers, index: 0 }
     })
+
     rr.shiftUser(roomName)
     expect(rr.getCurrentUser(roomName)).toBe("user2")
   })
@@ -41,7 +54,12 @@ describe("redis repository", () => {
     })
     const newUser = "user4"
     rr.addMember(roomName, newUser)
-    expect(rr.getAllUsers(roomName)).toBe(["user1", "user2", "user3", "user4"])
+    expect(rr.getAllUsers(roomName)).toEqual([
+      "user1",
+      "user2",
+      "user3",
+      "user4"
+    ])
   })
 
   it("throws an error if a user with the same name already exists on creating a new user", () => {
@@ -64,7 +82,7 @@ describe("redis repository", () => {
     })
     const userToBeDeleted = "user3"
     rr.deleteMember(roomName, userToBeDeleted)
-    expect(rr.getAllUsers(roomName)).toBe(["user1", "user2"])
+    expect(rr.getAllUsers(roomName)).toEqual(["user1", "user2"])
     expect(rr.getCurrentUser(roomName)).toBe("user1")
   })
 
@@ -76,7 +94,7 @@ describe("redis repository", () => {
     })
     const userToBeDeleted = "user2"
     rr.deleteMember(roomName, userToBeDeleted)
-    expect(rr.getAllUsers(roomName)).toBe(["user1", "user3"])
+    expect(rr.getAllUsers(roomName)).toEqual(["user1", "user3"])
     expect(rr.getCurrentUser(roomName)).toBe("user3")
   })
 
@@ -88,7 +106,7 @@ describe("redis repository", () => {
     })
     const userToBeDeleted = "user1"
     rr.deleteMember(roomName, userToBeDeleted)
-    expect(rr.getAllUsers(roomName)).toBe(["user2", "user3"])
+    expect(rr.getAllUsers(roomName)).toEqual(["user2", "user3"])
     expect(rr.getCurrentUser(roomName)).toBe("user2")
   })
 })
