@@ -8,6 +8,7 @@ interface Repository {
   getCurrentUser: (roomName: string) => void
   addMember: (roomName: string, username: string) => void
   deleteMember: (roomName: string, username: string) => void
+  getAllUsers: (roomName: string) => string[]
 }
 
 export class RedisRepository implements Repository {
@@ -18,10 +19,8 @@ export class RedisRepository implements Repository {
   }
 
   shiftUser(roomName: string) {
-    const currentMemberIndex: number =
-      this.robot.brain.get(`rotate:${roomName}:index`) || -1
-    const members: string[] =
-      this.robot.brain.get(`rotate:${roomName}:members`) || []
+    const currentMemberIndex = this.getCurrentIndex(roomName)
+    const members = this.getAllUsers(roomName)
     if (members.length === 0) {
       throw new Error("There is no member yet")
     }
@@ -30,10 +29,9 @@ export class RedisRepository implements Repository {
   }
 
   getCurrentUser(roomName: string) {
-    const currentMemberIndex: number =
-      this.robot.brain.get(`rotate:${roomName}:index`) || -1
-    const members: string[] =
-      this.robot.brain.get(`rotate:${roomName}:members`) || []
+    const currentMemberIndex = this.getCurrentIndex(roomName)
+    const members = this.getAllUsers(roomName)
+    this.robot.brain.get(`rotate:${roomName}:members`) || []
     if (currentMemberIndex < 0) {
       throw new Error("There is no member yet")
     }
@@ -42,8 +40,7 @@ export class RedisRepository implements Repository {
   }
 
   addMember(roomName: string, username: string) {
-    const members: string[] =
-      this.robot.brain.get(`rotate:${roomName}:members`) || []
+    const members = this.getAllUsers(roomName)
     if (members.indexOf(username) >= 0) {
       throw new Error(`${username} already exists`)
     }
@@ -52,14 +49,21 @@ export class RedisRepository implements Repository {
   }
 
   deleteMember(roomName: string, username: string) {
-    const members: string[] =
-      this.robot.brain.get(`rotate:${roomName}:members`) || []
+    const members = this.getAllUsers(roomName)
     const userIndex = members.indexOf(username)
     if (userIndex < 0) {
       throw new Error(`${username} does not exist`)
     }
     members.splice(userIndex, 1)
     this.robot.brain.set(`rotate:${roomName}:members`, members)
+  }
+
+  private getCurrentIndex(roomName: string) {
+    return +this.robot.brain.get(`rotate:${roomName}:index`) || -1
+  }
+
+  getAllUsers(roomName: string) {
+    return this.robot.brain.get(`rotate:${roomName}:members`) || []
   }
 }
 
