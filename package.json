@@ -5,6 +5,9 @@
   "license": "MIT",
   "main": "dist/index.js",
   "description": "A simple bot for role rotation such as a facilitator in morning meeting",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rimraf .rpt2_cache && rollup -c",
     "test": "jest --no-cache",

@@ -37,8 +37,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: release to npm 
-          command: echo "TODO"
+          name: release to npm
+          command: npm publish
 
 workflows:
   version: 2
