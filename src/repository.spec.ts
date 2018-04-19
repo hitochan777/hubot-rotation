@@ -4,7 +4,7 @@
 
 import * as hubot from "hubot"
 
-import { RedisRepository } from "./index"
+import { RedisRepository } from "./repository"
 
 describe("redis repository", () => {
   let robot: hubot.Robot
