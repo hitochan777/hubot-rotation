@@ -1,6 +1,6 @@
 {
   "name": "hubot-rotation",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "Otsuki Hitoshi <hitochan777@gmail.com>",
   "license": "MIT",
   "main": "dist/index.js",
