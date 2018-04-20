@@ -8,5 +8,6 @@ export default {
     file: "dist/index.js",
     format: "cjs"
   },
+  external: ["core-js"],
   plugins: [typescript(/*{ plugin options }*/)]
 }

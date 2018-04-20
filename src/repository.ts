@@ -2,6 +2,7 @@
 /// <reference path="@types/hubot/index.d.ts" />
 
 import * as hubot from "hubot"
+import "core-js"
 
 export interface Repository {
   shiftUser: (roomName: string) => void
