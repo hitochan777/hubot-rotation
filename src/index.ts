@@ -3,11 +3,14 @@
 
 import * as hubot from "hubot"
 import { RedisRepository, Repository } from "./repository"
+import createCommandBuilder from "./command_builder"
+
+const buildCommand = createCommandBuilder("rotate")
 
 export default (robot: hubot.Robot) => {
   const repo: Repository = new RedisRepository(robot)
 
-  robot.hear(/morning next/, (res: hubot.Response) => {
+  robot.hear(buildCommand("next"), (res: hubot.Response) => {
     try {
       repo.shiftUser(res.envelope.room)
       const nextUser = repo.getCurrentUser(res.envelope.room)
@@ -17,7 +20,7 @@ export default (robot: hubot.Robot) => {
     }
   })
 
-  robot.hear(/morning add (.+)/, (res: hubot.Response) => {
+  robot.hear(buildCommand("add (.+)"), (res: hubot.Response) => {
     const username = res.match[1]
     try {
       repo.addMember(res.envelope.room, username)
@@ -27,7 +30,7 @@ export default (robot: hubot.Robot) => {
     }
   })
 
-  robot.hear(/morning delete (.+)/, (res: hubot.Response) => {
+  robot.hear(buildCommand("delete (.+)"), (res: hubot.Response) => {
     const username = res.match[1]
     try {
       repo.deleteMember(res.envelope.room, username)
