@@ -109,4 +109,15 @@ describe("redis repository", () => {
     expect(rr.getAllUsers(roomName)).toEqual(["user2", "user3"])
     expect(rr.getCurrentUser(roomName)).toBe("user2")
   })
+
+  it("constructs a string by showing check mark to the current user", () => {
+    const roomName = "test room"
+    const initialMembers = ["user1", "user2", "user3"]
+    const rr = new RedisRepository(robot, {
+      [roomName]: { members: initialMembers, index: 1 }
+    })
+    expect(rr.toString(roomName)).toEqual(
+      "user1:arrow_right:user2:heavy_check_mark::arrow_right:user3"
+    )
+  })
 })

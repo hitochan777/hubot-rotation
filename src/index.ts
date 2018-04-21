@@ -12,9 +12,9 @@ export default (robot: hubot.Robot) => {
 
   robot.hear(buildCommand("next"), (res: hubot.Response) => {
     try {
-      repo.shiftUser(res.envelope.room)
-      const nextUser = repo.getCurrentUser(res.envelope.room)
-      res.reply(`Next facilitator is ${nextUser}`)
+      const roomName = res.envelope.room
+      repo.shiftUser(roomName)
+      res.reply(`${repo.toString(roomName)}`)
     } catch (e) {
       res.reply(e.message)
     }
@@ -35,6 +35,15 @@ export default (robot: hubot.Robot) => {
     try {
       repo.deleteMember(res.envelope.room, username)
       res.reply(`deleted ${username}`)
+    } catch (e) {
+      res.reply(e.message)
+    }
+  })
+
+  robot.hear(buildCommand("show"), (res: hubot.Response) => {
+    try {
+      const roomName = res.envelope.room
+      res.reply(`${repo.toString(roomName)}`)
     } catch (e) {
       res.reply(e.message)
     }
