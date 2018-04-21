@@ -21,17 +21,17 @@ See docker-compose [example](https://github.com/hitochan777/hubot-rotation/tree/
 
 * Add an user
 ```
-morning add hitochan
+rotate add hitochan
 ```
 
 * Delete an user
 ```
-morning delete hitochan
+rotate delete hitochan
 ```
 
 * Move the facilitator to the next user
 ```
-morning next
+rotate next
 ```
 
 # Development
