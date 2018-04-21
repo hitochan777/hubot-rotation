@@ -10,6 +10,7 @@ export interface Repository {
   addMember: (roomName: string, username: string) => void
   deleteMember: (roomName: string, username: string) => void
   getAllUsers: (roomName: string) => string[]
+  toString: (roomName: string) => string
 }
 
 export class RedisRepository implements Repository {
@@ -82,5 +83,12 @@ export class RedisRepository implements Repository {
 
   getAllUsers(roomName: string) {
     return this.robot.brain.get(`rotate:${roomName}:members`) || []
+  }
+
+  toString(roomName: string) {
+    const users = this.getAllUsers(roomName)
+    const index = this.getCurrentIndex(roomName)
+    users[index] += ":heavy_check_mark:"
+    return users.join(":arrow_right:")
   }
 }
