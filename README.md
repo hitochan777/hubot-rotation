@@ -19,6 +19,11 @@ See docker-compose [example](https://github.com/hitochan777/hubot-rotation/tree/
 
 ## Usage
 
+* Show current status
+```
+rotate show
+```
+
 * Add an user
 ```
 rotate add hitochan
