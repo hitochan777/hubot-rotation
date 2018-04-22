@@ -7,6 +7,8 @@
 
 hubot-rotation is a hubot script, that makes it easier for your team to rotate some roles such as facilitator of morning meeting.
 
+![hubot-rotation](https://raw.githubusercontent.com/hitochan777/hubot-rotation/master/.github/hubot-rotation.gif)
+
 # Requirement
 
 - [hubot-redis-brain](https://github.com/hubotio/hubot-redis-brain)
