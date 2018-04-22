@@ -25,89 +25,113 @@ describe("redis repository", () => {
     }
   })
 
-  it("moves the pointer to next user", () => {
-    const roomName = "test room"
-    const initialMembers = ["user1", "user2", "user3"]
-    const rr = new RedisRepository(robot, {
-      [roomName]: { members: initialMembers, index: 0 }
+  describe("shiftUser", () => {
+    it("moves the pointer to next user", () => {
+      const roomName = "test room"
+      const initialUsers = ["user1", "user2", "user3"]
+      const rr = new RedisRepository(robot, {
+        [roomName]: { members: initialUsers, index: 0 }
+      })
+
+      rr.shiftUser(roomName)
+      expect(rr.getCurrentUser(roomName)).toBe("user2")
     })
 
-    rr.shiftUser(roomName)
-    expect(rr.getCurrentUser(roomName)).toBe("user2")
+    it("moves the pointer to the first user if the pointer is at the last of the list", () => {
+      const roomName = "test room"
+      const initialUsers = ["user1", "user2", "user3"]
+      const rr = new RedisRepository(robot, {
+        [roomName]: { members: initialUsers, index: 2 }
+      })
+      rr.shiftUser(roomName)
+      expect(rr.getCurrentUser(roomName)).toBe("user1")
+    })
+
+    it("throws an error if there is no user", () => {
+      const roomName = "test room"
+      const rr = new RedisRepository(robot, {})
+
+      expect(() => {
+        rr.shiftUser(roomName)
+      }).toThrowError("There is no member yet")
+    })
   })
 
-  it("moves the pointer to the first user if the pointer is at the last of the list", () => {
-    const roomName = "test room"
-    const initialMembers = ["user1", "user2", "user3"]
-    const rr = new RedisRepository(robot, {
-      [roomName]: { members: initialMembers, index: 2 }
+  describe("addUser", () => {
+    it("adds new user at the end of list", () => {
+      const roomName = "test room"
+      const initialUsers = ["user1", "user2", "user3"]
+      const rr = new RedisRepository(robot, {
+        [roomName]: { members: initialUsers, index: 0 }
+      })
+      const newUser = "user4"
+      rr.addUser(roomName, newUser)
+      expect(rr.getAllUsers(roomName)).toEqual([
+        "user1",
+        "user2",
+        "user3",
+        "user4"
+      ])
     })
-    rr.shiftUser(roomName)
-    expect(rr.getCurrentUser(roomName)).toBe("user1")
+
+    it("throws an error if a user with the same name already exists on creating a new user", () => {
+      const roomName = "test room"
+      const initialUsers = ["user1", "user2", "user3"]
+      const rr = new RedisRepository(robot, {
+        [roomName]: { members: initialUsers, index: 0 }
+      })
+      const newUser = "user2"
+      expect(() => {
+        rr.addUser(roomName, newUser)
+      }).toThrowError()
+    })
   })
 
-  it("adds new user at the end of list", () => {
-    const roomName = "test room"
-    const initialMembers = ["user1", "user2", "user3"]
-    const rr = new RedisRepository(robot, {
-      [roomName]: { members: initialMembers, index: 0 }
+  describe("deleteUser", () => {
+    it("sets the current user to the first user in the list if the deleted user is at the last", () => {
+      const roomName = "test room"
+      const initialUsers = ["user1", "user2", "user3"]
+      const rr = new RedisRepository(robot, {
+        [roomName]: { members: initialUsers, index: 2 }
+      })
+      const userToBeDeleted = "user3"
+      rr.deleteUser(roomName, userToBeDeleted)
+      expect(rr.getAllUsers(roomName)).toEqual(["user1", "user2"])
+      expect(rr.getCurrentUser(roomName)).toBe("user1")
     })
-    const newUser = "user4"
-    rr.addMember(roomName, newUser)
-    expect(rr.getAllUsers(roomName)).toEqual([
-      "user1",
-      "user2",
-      "user3",
-      "user4"
-    ])
-  })
 
-  it("throws an error if a user with the same name already exists on creating a new user", () => {
-    const roomName = "test room"
-    const initialMembers = ["user1", "user2", "user3"]
-    const rr = new RedisRepository(robot, {
-      [roomName]: { members: initialMembers, index: 0 }
+    it("sets the current user to the next user if the deleted user is the current user and is not the last", () => {
+      const roomName = "test room"
+      const initialUsers = ["user1", "user2", "user3"]
+      const rr = new RedisRepository(robot, {
+        [roomName]: { members: initialUsers, index: 1 }
+      })
+      const userToBeDeleted = "user2"
+      rr.deleteUser(roomName, userToBeDeleted)
+      expect(rr.getAllUsers(roomName)).toEqual(["user1", "user3"])
+      expect(rr.getCurrentUser(roomName)).toBe("user3")
     })
-    const newUser = "user2"
-    expect(() => {
-      rr.addMember(roomName, newUser)
-    }).toThrowError()
-  })
 
-  it("sets the current user to the first user in the list if the deleted user is at the last", () => {
-    const roomName = "test room"
-    const initialMembers = ["user1", "user2", "user3"]
-    const rr = new RedisRepository(robot, {
-      [roomName]: { members: initialMembers, index: 2 }
+    it("does not change the current user if the deleted user is not the current user", () => {
+      const roomName = "test room"
+      const initialUsers = ["user1", "user2", "user3"]
+      const rr = new RedisRepository(robot, {
+        [roomName]: { members: initialUsers, index: 1 }
+      })
+      const userToBeDeleted = "user1"
+      rr.deleteUser(roomName, userToBeDeleted)
+      expect(rr.getAllUsers(roomName)).toEqual(["user2", "user3"])
+      expect(rr.getCurrentUser(roomName)).toBe("user2")
     })
-    const userToBeDeleted = "user3"
-    rr.deleteMember(roomName, userToBeDeleted)
-    expect(rr.getAllUsers(roomName)).toEqual(["user1", "user2"])
-    expect(rr.getCurrentUser(roomName)).toBe("user1")
-  })
 
-  it("sets the current user to the next user if the deleted user is the current user and is not the last", () => {
-    const roomName = "test room"
-    const initialMembers = ["user1", "user2", "user3"]
-    const rr = new RedisRepository(robot, {
-      [roomName]: { members: initialMembers, index: 1 }
+    it("throws an error if the specified user does not exist", () => {
+      const roomName = "test room"
+      const rr = new RedisRepository(robot, {})
+      const userToBeDeleted = "user1"
+      expect(() => {
+        rr.deleteUser(roomName, userToBeDeleted)
+      }).toThrowError("user1 does not exist")
     })
-    const userToBeDeleted = "user2"
-    rr.deleteMember(roomName, userToBeDeleted)
-    expect(rr.getAllUsers(roomName)).toEqual(["user1", "user3"])
-    expect(rr.getCurrentUser(roomName)).toBe("user3")
-  })
-
-  it("does not change the current user if the deleted user is not the current user", () => {
-    const roomName = "test room"
-    const initialMembers = ["user1", "user2", "user3"]
-    const rr = new RedisRepository(robot, {
-      [roomName]: { members: initialMembers, index: 1 }
-    })
-    const userToBeDeleted = "user1"
-    rr.deleteMember(roomName, userToBeDeleted)
-    expect(rr.getAllUsers(roomName)).toEqual(["user2", "user3"])
-    expect(rr.getCurrentUser(roomName)).toBe("user2")
   })
 
   describe("getCurrentIndex", () => {
@@ -119,9 +143,9 @@ describe("redis repository", () => {
 
     it("returns correct index if it is set", () => {
       const roomName = "test room"
-      const initialMembers = ["user1", "user2"]
+      const initialUsers = ["user1", "user2"]
       const rr = new RedisRepository(robot, {
-        [roomName]: { members: initialMembers, index: 1 }
+        [roomName]: { members: initialUsers, index: 1 }
       })
       expect(rr["getCurrentIndex"](roomName)).toEqual(1)
     })
@@ -130,9 +154,9 @@ describe("redis repository", () => {
   describe("toString", () => {
     it("returns a string showing check mark to the current user", () => {
       const roomName = "test room"
-      const initialMembers = ["user1", "user2", "user3"]
+      const initialUsers = ["user1", "user2", "user3"]
       const rr = new RedisRepository(robot, {
-        [roomName]: { members: initialMembers, index: 1 }
+        [roomName]: { members: initialUsers, index: 1 }
       })
       expect(rr.toString(roomName)).toEqual(
         "user1:arrow_right:user2:heavy_check_mark::arrow_right:user3"

@@ -7,13 +7,13 @@ import "core-js"
 export interface Repository {
   shiftUser: (roomName: string) => void
   getCurrentUser: (roomName: string) => string
-  addMember: (roomName: string, username: string) => void
-  deleteMember: (roomName: string, username: string) => void
+  addUser: (roomName: string, username: string) => void
+  deleteUser: (roomName: string, username: string) => void
   getAllUsers: (roomName: string) => string[]
   toString: (roomName: string) => string
 }
 
-const noMemberError = new Error("There is no member yet")
+const noUserError = new Error("There is no member yet")
 
 export class RedisRepository implements Repository {
   private robot: hubot.Robot
@@ -30,26 +30,26 @@ export class RedisRepository implements Repository {
   }
 
   shiftUser(roomName: string) {
-    const currentMemberIndex = this.getCurrentIndex(roomName)
+    const currentUserIndex = this.getCurrentIndex(roomName)
     const members = this.getAllUsers(roomName)
     if (members.length === 0) {
-      throw noMemberError
+      throw noUserError
     }
-    const nextMemberIndex = (currentMemberIndex + 1) % members.length
-    this.robot.brain.set(`rotate:${roomName}:index`, nextMemberIndex)
+    const nextUserIndex = (currentUserIndex + 1) % members.length
+    this.robot.brain.set(`rotate:${roomName}:index`, nextUserIndex)
   }
 
   getCurrentUser(roomName: string) {
-    const currentMemberIndex = this.getCurrentIndex(roomName)
+    const currentUserIndex = this.getCurrentIndex(roomName)
     const members = this.getAllUsers(roomName)
-    if (currentMemberIndex < 0) {
-      throw noMemberError
+    if (currentUserIndex < 0) {
+      throw noUserError
     }
 
-    return members[currentMemberIndex]
+    return members[currentUserIndex]
   }
 
-  addMember(roomName: string, username: string) {
+  addUser(roomName: string, username: string) {
     const members = this.getAllUsers(roomName)
     if (members.indexOf(username) >= 0) {
       throw new Error(`${username} already exists`)
@@ -58,7 +58,7 @@ export class RedisRepository implements Repository {
     this.robot.brain.set(`rotate:${roomName}:members`, members)
   }
 
-  deleteMember(roomName: string, username: string) {
+  deleteUser(roomName: string, username: string) {
     const members = this.getAllUsers(roomName)
     const userIndex = members.indexOf(username)
     if (userIndex < 0) {
@@ -91,7 +91,7 @@ export class RedisRepository implements Repository {
     const users = this.getAllUsers(roomName).slice()
     const index = this.getCurrentIndex(roomName)
     if (users.length === 0) {
-      throw noMemberError
+      throw noUserError
     }
     users[index] += ":heavy_check_mark:"
     return users.join(":arrow_right:")
