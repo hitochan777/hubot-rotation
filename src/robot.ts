@@ -20,7 +20,6 @@ export function errorHandler(
       res.reply(e.message)
     }
   }
-  return descriptor
 }
 
 export class RequestHandler {
@@ -61,8 +60,8 @@ export default (robot: hubot.Robot) => {
   const repo = new RedisRepository(robot)
   const handler = new RequestHandler(repo)
 
-  robot.hear(buildCommand("next"), handler.shiftUser)
-  robot.hear(buildCommand("add (.+)"), handler.addUser)
-  robot.hear(buildCommand("delete (.+)"), handler.deleteUser)
-  robot.hear(buildCommand("show"), handler.showUsers)
+  robot.hear(buildCommand("next"), handler.shiftUser.bind(handler))
+  robot.hear(buildCommand("add (.+)"), handler.addUser.bind(handler))
+  robot.hear(buildCommand("delete (.+)"), handler.deleteUser.bind(handler))
+  robot.hear(buildCommand("show"), handler.showUsers.bind(handler))
 }
