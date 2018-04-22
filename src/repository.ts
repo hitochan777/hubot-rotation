@@ -13,6 +13,8 @@ export interface Repository {
   toString: (roomName: string) => string
 }
 
+const noMemberError = new Error("There is no member yet")
+
 export class RedisRepository implements Repository {
   private robot: hubot.Robot
 
@@ -31,7 +33,7 @@ export class RedisRepository implements Repository {
     const currentMemberIndex = this.getCurrentIndex(roomName)
     const members = this.getAllUsers(roomName)
     if (members.length === 0) {
-      throw new Error("There is no member yet")
+      throw noMemberError
     }
     const nextMemberIndex = (currentMemberIndex + 1) % members.length
     this.robot.brain.set(`rotate:${roomName}:index`, nextMemberIndex)
@@ -41,7 +43,7 @@ export class RedisRepository implements Repository {
     const currentMemberIndex = this.getCurrentIndex(roomName)
     const members = this.getAllUsers(roomName)
     if (currentMemberIndex < 0) {
-      throw new Error("There is no member yet")
+      throw noMemberError
     }
 
     return members[currentMemberIndex]
@@ -77,8 +79,8 @@ export class RedisRepository implements Repository {
   }
 
   private getCurrentIndex(roomName: string): number {
-    const index = +this.robot.brain.get(`rotate:${roomName}:index`)
-    return index === undefined ? -1 : index
+    const index = this.robot.brain.get(`rotate:${roomName}:index`)
+    return index === undefined ? -1 : +index
   }
 
   getAllUsers(roomName: string) {
@@ -88,6 +90,9 @@ export class RedisRepository implements Repository {
   toString(roomName: string) {
     const users = this.getAllUsers(roomName).slice()
     const index = this.getCurrentIndex(roomName)
+    if (users.length === 0) {
+      throw noMemberError
+    }
     users[index] += ":heavy_check_mark:"
     return users.join(":arrow_right:")
   }

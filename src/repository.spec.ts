@@ -110,14 +110,41 @@ describe("redis repository", () => {
     expect(rr.getCurrentUser(roomName)).toBe("user2")
   })
 
-  it("constructs a string by showing check mark to the current user", () => {
-    const roomName = "test room"
-    const initialMembers = ["user1", "user2", "user3"]
-    const rr = new RedisRepository(robot, {
-      [roomName]: { members: initialMembers, index: 1 }
+  describe("getCurrentIndex", () => {
+    it("returns -1 if there is no user", () => {
+      const roomName = "test room"
+      const rr = new RedisRepository(robot, {})
+      expect(rr["getCurrentIndex"](roomName)).toEqual(-1)
     })
-    expect(rr.toString(roomName)).toEqual(
-      "user1:arrow_right:user2:heavy_check_mark::arrow_right:user3"
-    )
+
+    it("returns correct index if it is set", () => {
+      const roomName = "test room"
+      const initialMembers = ["user1", "user2"]
+      const rr = new RedisRepository(robot, {
+        [roomName]: { members: initialMembers, index: 1 }
+      })
+      expect(rr["getCurrentIndex"](roomName)).toEqual(1)
+    })
+  })
+
+  describe("toString", () => {
+    it("returns a string showing check mark to the current user", () => {
+      const roomName = "test room"
+      const initialMembers = ["user1", "user2", "user3"]
+      const rr = new RedisRepository(robot, {
+        [roomName]: { members: initialMembers, index: 1 }
+      })
+      expect(rr.toString(roomName)).toEqual(
+        "user1:arrow_right:user2:heavy_check_mark::arrow_right:user3"
+      )
+    })
+
+    it("throws an error if thre is not user yet", () => {
+      const roomName = "test room"
+      const rr = new RedisRepository(robot, {})
+      expect(() => {
+        rr.toString(roomName)
+      }).toThrowError(/^There is no member yet$/)
+    })
   })
 })
