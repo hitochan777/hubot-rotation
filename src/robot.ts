@@ -7,15 +7,15 @@ import createCommandBuilder from "./command_builder"
 
 const buildCommand = createCommandBuilder("rotate")
 
-export const errorHandler = (
+export function errorHandler(
   target: any,
   propertyKey: string,
   descriptor: PropertyDescriptor
-): any => {
-  let handler: (res: hubot.Response) => void = descriptor.value
-  descriptor.value = (res: hubot.Response) => {
+): any {
+  let method: (res: hubot.Response) => void = descriptor.value
+  descriptor.value = function(res: hubot.Response) {
     try {
-      handler(res)
+      method.apply(this, [res])
     } catch (e) {
       res.reply(e.message)
     }
@@ -36,21 +36,21 @@ export class RequestHandler {
   }
 
   @errorHandler
-  addMember(res: hubot.Response) {
+  addUser(res: hubot.Response) {
     const username = res.match[1]
-    this.repo.addMember(res.envelope.room, username)
+    this.repo.addUser(res.envelope.room, username)
     res.send(`Added ${username}`)
   }
 
   @errorHandler
-  deleteMember(res: hubot.Response) {
+  deleteUser(res: hubot.Response) {
     const username = res.match[1]
-    this.repo.deleteMember(res.envelope.room, username)
+    this.repo.deleteUser(res.envelope.room, username)
     res.send(`Deleted ${username}`)
   }
 
   @errorHandler
-  showMembers(res: hubot.Response) {
+  showUsers(res: hubot.Response) {
     const roomName = res.envelope.room
     const list = this.repo.toString(roomName)
     res.send(`${list}`)
@@ -62,7 +62,7 @@ export default (robot: hubot.Robot) => {
   const handler = new RequestHandler(repo)
 
   robot.hear(buildCommand("next"), handler.shiftUser)
-  robot.hear(buildCommand("add (.+)"), handler.addMember)
-  robot.hear(buildCommand("delete (.+)"), handler.deleteMember)
-  robot.hear(buildCommand("show"), handler.showMembers)
+  robot.hear(buildCommand("add (.+)"), handler.addUser)
+  robot.hear(buildCommand("delete (.+)"), handler.deleteUser)
+  robot.hear(buildCommand("show"), handler.showUsers)
 }
