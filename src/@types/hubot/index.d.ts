@@ -16,6 +16,7 @@ declare module "hubot" {
   export interface Response {
     match: [string, string, { index: number }, { input: string }]
     reply(...msg: string[]): void
+    send(...msg: string[]): void
     envelope: {
       room: string
       user: {
