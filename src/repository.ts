@@ -86,7 +86,7 @@ export class RedisRepository implements Repository {
   }
 
   toString(roomName: string) {
-    const users = this.getAllUsers(roomName)
+    const users = this.getAllUsers(roomName).slice()
     const index = this.getCurrentIndex(roomName)
     users[index] += ":heavy_check_mark:"
     return users.join(":arrow_right:")
