@@ -1,6 +1,6 @@
 {
   "name": "hubot-rotation",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "author": "Otsuki Hitoshi <hitochan777@gmail.com>",
   "license": "MIT",
   "main": "dist/index.js",
@@ -17,6 +17,7 @@
   "devDependencies": {
     "@types/jest": "^22.2.2",
     "@types/node": "^9.6.5",
+    "husky": "^1.0.0-rc.2",
     "jest": "^22.4.3",
     "prettier": "^1.11.1",
     "rimraf": "^2.6.2",
@@ -55,5 +56,11 @@
   },
   "dependencies": {
     "core-js": "^2.5.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn test && yarn prettier-check",
+      "pre-push": "yarn test && yarn prettier-check"
+    }
   }
 }
