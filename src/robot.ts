@@ -4,6 +4,7 @@
 import * as hubot from "hubot"
 import { RedisRepository, Repository } from "./repository"
 import createCommandBuilder from "./command_builder"
+import { dateToString } from "./date"
 
 const buildCommand = createCommandBuilder("rotate")
 
@@ -31,7 +32,7 @@ export class RequestHandler {
   shiftUser(res: hubot.Response) {
     const roomName = res.envelope.room
     this.repo.shiftUser(roomName)
-    res.send(`${this.repo.toString(roomName)}`)
+    res.send(dateToString(new Date()) + "\n" + this.repo.toString(roomName))
   }
 
   @errorHandler
@@ -52,7 +53,7 @@ export class RequestHandler {
   showUsers(res: hubot.Response) {
     const roomName = res.envelope.room
     const list = this.repo.toString(roomName)
-    res.send(`${list}`)
+    res.send(dateToString(new Date()) + "\n" + list)
   }
 }
 
