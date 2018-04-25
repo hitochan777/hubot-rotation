@@ -4,6 +4,7 @@
 import * as hubot from "hubot"
 import { Repository } from "./repository"
 import { RequestHandler } from "./robot"
+import { dateToString } from "./date"
 
 describe("RequestHandler", () => {
   let res: hubot.Response
@@ -34,7 +35,9 @@ describe("RequestHandler", () => {
   it("shifts pointer and send current status", () => {
     rh.shiftUser(res)
     expect(repo.shiftUser).toHaveBeenCalledWith("room1")
-    expect(res.send).toHaveBeenCalledWith("toString room1")
+    expect(res.send).toHaveBeenCalledWith(
+      dateToString(new Date()) + "\ntoString room1"
+    )
   })
 
   it("adds an user and notifies the room", () => {
@@ -52,6 +55,8 @@ describe("RequestHandler", () => {
   it("sends the current status to the room", () => {
     rh.showUsers(res)
     expect(repo.toString).toHaveBeenCalledWith("room1")
-    expect(res.send).toHaveBeenCalledWith("toString room1")
+    expect(res.send).toHaveBeenCalledWith(
+      dateToString(new Date()) + "\ntoString room1"
+    )
   })
 })
