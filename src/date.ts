@@ -40,8 +40,8 @@ export class TimezoneOffset {
 }
 
 export const dateToString = (d: Date) => {
-  const date = d.getDate()
-  const month = d.getMonth() + 1
-  const year = d.getFullYear()
+  const date = d.getUTCDate()
+  const month = d.getUTCMonth() + 1
+  const year = d.getUTCFullYear()
   return `${year}/${month}/${date}`
 }

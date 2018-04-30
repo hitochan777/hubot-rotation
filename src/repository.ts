@@ -33,7 +33,7 @@ export class RedisRepository implements Repository {
   }
 
   getTimezoneOffset(roomName: string): TimezoneOffset {
-    const to = this.robot.brain.get(`rotate:${roomName}:timezone`)
+    const to = this.robot.brain.get(`rotate:${roomName}:timezone`) || "+09:00"
     return new TimezoneOffset(to)
   }
 
