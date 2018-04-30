@@ -2,6 +2,7 @@
 /// <reference path="@types/hubot/index.d.ts" />
 
 import * as hubot from "hubot"
+import { TimezoneOffset } from "./date"
 import "core-js"
 
 export interface Repository {
@@ -11,6 +12,8 @@ export interface Repository {
   deleteUser: (roomName: string, username: string) => void
   getAllUsers: (roomName: string) => string[]
   toString: (roomName: string) => string
+  getTimezoneOffset: (roomName: string) => TimezoneOffset
+  setTimezoneOffset: (roomName: string, timezone: TimezoneOffset) => void
 }
 
 const noUserError = new Error("There is no member yet")
@@ -27,6 +30,15 @@ export class RedisRepository implements Repository {
       this.robot.brain.set(`rotate:${roomName}:members`, room.members)
       this.robot.brain.set(`rotate:${roomName}:index`, room.index)
     }
+  }
+
+  getTimezoneOffset(roomName: string): TimezoneOffset {
+    const to = this.robot.brain.get(`rotate:${roomName}:timezone`)
+    return new TimezoneOffset(to)
+  }
+
+  setTimezoneOffset(roomName: string, timezone: TimezoneOffset): void {
+    this.robot.brain.set(`rotate:${roomName}:timezone`, timezone.toString())
   }
 
   shiftUser(roomName: string) {

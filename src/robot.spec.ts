@@ -26,7 +26,9 @@ describe("RequestHandler", () => {
       addUser: jest.fn(),
       deleteUser: jest.fn(),
       getAllUsers: jest.fn(),
-      toString: jest.fn((roomName: string) => `toString ${roomName}`)
+      toString: jest.fn((roomName: string) => `toString ${roomName}`),
+      setTimezoneOffset: jest.fn(),
+      getTimezoneOffset: jest.fn((roomName: string) => "+09:00")
     }
 
     rh = new RequestHandler(repo)
@@ -58,5 +60,21 @@ describe("RequestHandler", () => {
     expect(res.send).toHaveBeenCalledWith(
       dateToString(new Date()) + "\ntoString room1"
     )
+  })
+
+  describe("configTimezone", () => {
+    it("sets timezone offset if set and send the notification", () => {
+      res.match = ["rotation config timezone +09:00", " +09:00", "+09:00"]
+      rh.configTimezone(res)
+      expect(repo.setTimezoneOffset).toHaveBeenCalled()
+      expect(res.send).toHaveBeenCalledWith("Timezone offset set to +09:00")
+    })
+
+    it("does not try to set timezone offset when it is not specified", () => {
+      res.match = ["rotation config timezone"]
+      rh.configTimezone(res)
+      expect(repo.setTimezoneOffset).not.toHaveBeenCalled()
+      expect(res.send).toHaveBeenCalledWith("Timezone offset set to +09:00")
+    })
   })
 })
