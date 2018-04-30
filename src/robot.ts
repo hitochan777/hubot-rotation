@@ -3,6 +3,7 @@
 
 import * as hubot from "hubot"
 import { RedisRepository, Repository } from "./repository"
+import { TimezoneOffset } from "./date"
 import createCommandBuilder from "./command_builder"
 import { dateToString } from "./date"
 
@@ -28,11 +29,17 @@ export class RequestHandler {
     this.repo = repo
   }
 
+  getDateString(roomName: string): string {
+    const currentDate = new Date()
+    const offset = this.repo.getTimezoneOffset(roomName).offsetMilliseconds
+    return dateToString(new Date(currentDate.getTime() + offset))
+  }
+
   @errorHandler
   shiftUser(res: hubot.Response) {
     const roomName = res.envelope.room
     this.repo.shiftUser(roomName)
-    res.send(dateToString(new Date()) + "\n" + this.repo.toString(roomName))
+    res.send(this.getDateString(roomName) + "\n" + this.repo.toString(roomName))
   }
 
   @errorHandler
@@ -53,7 +60,17 @@ export class RequestHandler {
   showUsers(res: hubot.Response) {
     const roomName = res.envelope.room
     const list = this.repo.toString(roomName)
-    res.send(dateToString(new Date()) + "\n" + list)
+    res.send(this.getDateString(roomName) + "\n" + list)
+  }
+
+  @errorHandler
+  configTimezone(res: hubot.Response) {
+    const roomName = res.envelope.room
+    if (res.match.length === 3 && res.match[2]) {
+      const offset = res.match[2]
+      this.repo.setTimezoneOffset(roomName, new TimezoneOffset(offset))
+    }
+    res.send("Timezone offset set to " + this.repo.getTimezoneOffset(roomName))
   }
 }
 
@@ -65,4 +82,8 @@ export default (robot: hubot.Robot) => {
   robot.hear(buildCommand("add (.+)"), handler.addUser.bind(handler))
   robot.hear(buildCommand("delete (.+)"), handler.deleteUser.bind(handler))
   robot.hear(buildCommand("show"), handler.showUsers.bind(handler))
+  robot.hear(
+    buildCommand("config timezone( (.+))?"),
+    handler.configTimezone.bind(handler)
+  )
 }
