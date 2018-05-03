@@ -83,7 +83,7 @@ export default (robot: hubot.Robot) => {
   robot.hear(buildCommand("delete (.+)"), handler.deleteUser.bind(handler))
   robot.hear(buildCommand("show"), handler.showUsers.bind(handler))
   robot.hear(
-    buildCommand("config timezone( (.+))?"),
+    buildCommand("config timezone( (\\S+))?"),
     handler.configTimezone.bind(handler)
   )
 }
