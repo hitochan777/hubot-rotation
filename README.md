@@ -41,6 +41,17 @@ rotate delete hitochan
 rotate next
 ```
 
+* Timezone (Default: +09:00)
+
+To set timezone (In +/-HH:mm format from -12:00 to +14:00. I don't know why **+14:00** but it was written so in wikipedia)
+```
+rotate config timezone +02:00
+```
+To show currently used timezone
+```
+rotate config timezone
+```
+
 # Development
 
 Feel free to submit Pull Requests to improve hubot-rotation together!
