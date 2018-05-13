@@ -40,6 +40,9 @@ describe("RequestHandler", () => {
     rh.shiftUser(res)
     expect(repo.shiftUser).toHaveBeenCalledWith("room1")
     expect(res.send).toHaveBeenCalled()
+    const lines: string[] = (res.send as any).mock.calls[0][0].split("\n")
+    expect(lines).toHaveLength(3)
+    expect(lines[0]).toBe("@here")
   })
 
   it("adds an user and notifies the room", () => {
@@ -58,6 +61,9 @@ describe("RequestHandler", () => {
     rh.showUsers(res)
     expect(repo.toString).toHaveBeenCalledWith("room1")
     expect(res.send).toHaveBeenCalled()
+    const lines: string[] = (res.send as any).mock.calls[0][0].split("\n")
+    expect(lines).toHaveLength(3)
+    expect(lines[0]).toBe("@here")
   })
 
   describe("configTimezone", () => {
