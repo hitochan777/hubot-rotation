@@ -25,8 +25,9 @@ export function errorHandler(
 }
 
 export class RequestHandler {
-  constructor(private repo: Repository) {
+  constructor(private repo: Repository, private mention: string = "@here") {
     this.repo = repo
+    this.mention = mention
   }
 
   getDateString(roomName: string): string {
@@ -39,7 +40,13 @@ export class RequestHandler {
   shiftUser(res: hubot.Response) {
     const roomName = res.envelope.room
     this.repo.shiftUser(roomName)
-    res.send(this.getDateString(roomName) + "\n" + this.repo.toString(roomName))
+    res.send(
+      [
+        this.mention,
+        this.getDateString(roomName),
+        this.repo.toString(roomName)
+      ].join("\n")
+    )
   }
 
   @errorHandler
@@ -60,7 +67,7 @@ export class RequestHandler {
   showUsers(res: hubot.Response) {
     const roomName = res.envelope.room
     const list = this.repo.toString(roomName)
-    res.send(this.getDateString(roomName) + "\n" + list)
+    res.send([this.mention, this.getDateString(roomName), list].join("\n"))
   }
 
   @errorHandler
