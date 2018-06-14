@@ -1,12 +1,13 @@
 {
   "name": "hubot-rotation",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "author": "Otsuki Hitoshi <hitochan777@gmail.com>",
   "license": "MIT",
   "main": "dist/index.js",
-  "description":
-    "A simple bot for role rotation such as a facilitator in morning meeting",
-  "files": ["dist"],
+  "description": "A simple bot for role rotation such as a facilitator in morning meeting",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rimraf .rpt2_cache && rollup -c",
     "test": "jest --no-cache",
@@ -27,7 +28,14 @@
         "tsConfigFile": "./tsconfig.jest.json"
       }
     },
-    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
