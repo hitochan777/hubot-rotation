@@ -6,6 +6,7 @@ import { RedisRepository, Repository } from "./repository"
 import { TimezoneOffset } from "./date"
 import createCommandBuilder from "./command_builder"
 import { dateToString } from "./date"
+import logger from "./logger"
 
 const buildCommand = createCommandBuilder("rotate")
 
@@ -30,6 +31,11 @@ export class RequestHandler {
     this.mention = mention
   }
 
+  send(res: hubot.Response, message: string) {
+    logger.info(message)
+    res.send(message)
+  }
+
   getDateString(roomName: string): string {
     const currentDate = new Date()
     const offset = this.repo.getTimezoneOffset(roomName).offsetMilliseconds
@@ -40,7 +46,8 @@ export class RequestHandler {
   shiftUser(res: hubot.Response) {
     const roomName = res.envelope.room
     this.repo.shiftUser(roomName)
-    res.send(
+    this.send(
+      res,
       [
         this.mention,
         this.getDateString(roomName),
@@ -53,21 +60,24 @@ export class RequestHandler {
   addUser(res: hubot.Response) {
     const username = res.match[1]
     this.repo.addUser(res.envelope.room, username)
-    res.send(`Added ${username}`)
+    this.send(res, `Added ${username}`)
   }
 
   @errorHandler
   deleteUser(res: hubot.Response) {
     const username = res.match[1]
     this.repo.deleteUser(res.envelope.room, username)
-    res.send(`Deleted ${username}`)
+    this.send(res, `Deleted ${username}`)
   }
 
   @errorHandler
   showUsers(res: hubot.Response) {
     const roomName = res.envelope.room
     const list = this.repo.toString(roomName)
-    res.send([this.mention, this.getDateString(roomName), list].join("\n"))
+    this.send(
+      res,
+      [this.mention, this.getDateString(roomName), list].join("\n")
+    )
   }
 
   @errorHandler
@@ -77,7 +87,10 @@ export class RequestHandler {
       const offset = res.match[2]
       this.repo.setTimezoneOffset(roomName, new TimezoneOffset(offset))
     }
-    res.send("Timezone offset set to " + this.repo.getTimezoneOffset(roomName))
+    this.send(
+      res,
+      "Timezone offset set to " + this.repo.getTimezoneOffset(roomName)
+    )
   }
 }
 
