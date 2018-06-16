@@ -81,15 +81,4 @@ describe("RequestHandler", () => {
       expect(res.send).toHaveBeenCalledWith("Timezone offset set to +09:00")
     })
   })
-
-  describe("send", () => {
-    it("replies an error message when there is some error send message", async () => {
-      const errorMessage = "error message"
-      res.send = (...msg: string[]) => Promise.reject({ message: errorMessage })
-
-      rh = new RequestHandler(repo)
-      await rh.send(res, "hello world!")
-      expect(res.reply).toHaveBeenCalledWith(errorMessage)
-    })
-  })
 })

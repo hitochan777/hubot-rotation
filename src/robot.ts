@@ -33,9 +33,7 @@ export class RequestHandler {
 
   send(res: hubot.Response, message: string) {
     logger.info(message)
-    res.send(message).catch(e => {
-      res.reply(e.message)
-    })
+    res.send(message)
   }
 
   getDateString(roomName: string): string {
