@@ -101,7 +101,7 @@ export default (robot: hubot.Robot) => {
   const handler = new RequestHandler(repo)
 
   robot.hear(buildCommand("next"), handler.shiftUser.bind(handler))
-  robot.hear(buildCommand("add (.+)"), handler.addUser.bind(handler))
+  robot.hear(buildCommand("add (.+)"), handler.addUsers.bind(handler))
   robot.hear(buildCommand("delete (.+)"), handler.deleteUser.bind(handler))
   robot.hear(buildCommand("show"), handler.showUsers.bind(handler))
   robot.hear(
