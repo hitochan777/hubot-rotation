@@ -46,9 +46,26 @@ describe("RequestHandler", () => {
   })
 
   it("adds an user and notifies the room", () => {
-    rh.addUser(res)
+    rh.addUsers(res)
     expect(repo.addUser).toHaveBeenCalledWith("room1", "hitochan")
     expect(res.send).toHaveBeenCalledWith("Added hitochan")
+  })
+
+  it("adds an multiple users and notifies the room", () => {
+    res = {
+      match: ["rotation add user1 user2 user3", "user1", "user2", "user3"],
+      reply: jest.fn(),
+      send: jest.fn(),
+      envelope: {
+        room: "room1"
+      }
+    }
+    rh.addUsers(res)
+    expect((repo.addUser as any).mock.calls.length).toBe(3)
+    expect((repo.addUser as any).mock.calls[0]).toEqual(["room1", "user1"])
+    expect((repo.addUser as any).mock.calls[1]).toEqual(["room1", "user2"])
+    expect((repo.addUser as any).mock.calls[2]).toEqual(["room1", "user3"])
+    expect(res.send).toHaveBeenCalledWith("Added user1 user2 user3")
   })
 
   it("deletes an user and notifies the room", () => {

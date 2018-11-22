@@ -57,10 +57,12 @@ export class RequestHandler {
   }
 
   @errorHandler
-  addUser(res: hubot.Response) {
-    const username = res.match[1]
-    this.repo.addUser(res.envelope.room, username)
-    this.send(res, `Added ${username}`)
+  addUsers(res: hubot.Response) {
+    const usernames = res.match.slice(1)
+    for (let username of usernames) {
+      this.repo.addUser(res.envelope.room, username)
+    }
+    this.send(res, `Added ${usernames.join(" ")}`)
   }
 
   @errorHandler
