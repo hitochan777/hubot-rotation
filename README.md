@@ -26,7 +26,7 @@ See docker-compose [example](https://github.com/hitochan777/hubot-rotation/tree/
 rotate show
 ```
 
-* Add an user
+* Add users
 ```
 rotate add user1 user2 user3
 ```
