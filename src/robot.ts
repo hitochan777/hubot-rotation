@@ -4,11 +4,9 @@
 import * as hubot from "hubot"
 import { RedisRepository, Repository } from "./repository"
 import { TimezoneOffset } from "./date"
-import createCommandBuilder from "./command_builder"
 import { dateToString } from "./date"
 import logger from "./logger"
-
-const buildCommand = createCommandBuilder("rotate")
+import * as commandRegExp from "./command"
 
 export function errorHandler(
   target: any,
@@ -57,10 +55,12 @@ export class RequestHandler {
   }
 
   @errorHandler
-  addUser(res: hubot.Response) {
-    const username = res.match[1]
-    this.repo.addUser(res.envelope.room, username)
-    this.send(res, `Added ${username}`)
+  addUsers(res: hubot.Response) {
+    const usernames = res.match[1].trim().split(/\s+/)
+    for (let username of usernames) {
+      this.repo.addUser(res.envelope.room, username)
+    }
+    this.send(res, `Added ${usernames.join(" ")}`)
   }
 
   @errorHandler
@@ -98,12 +98,12 @@ export default (robot: hubot.Robot) => {
   const repo = new RedisRepository(robot)
   const handler = new RequestHandler(repo)
 
-  robot.hear(buildCommand("next"), handler.shiftUser.bind(handler))
-  robot.hear(buildCommand("add (.+)"), handler.addUser.bind(handler))
-  robot.hear(buildCommand("delete (.+)"), handler.deleteUser.bind(handler))
-  robot.hear(buildCommand("show"), handler.showUsers.bind(handler))
+  robot.hear(commandRegExp.NEXT, handler.shiftUser.bind(handler))
+  robot.hear(commandRegExp.ADD, handler.addUsers.bind(handler))
+  robot.hear(commandRegExp.DELETE, handler.deleteUser.bind(handler))
+  robot.hear(commandRegExp.SHOW, handler.showUsers.bind(handler))
   robot.hear(
-    buildCommand("config timezone( (\\S+))?"),
+    commandRegExp.CONFIG_TIMEZONE,
     handler.configTimezone.bind(handler)
   )
 }
