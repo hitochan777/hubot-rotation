@@ -28,10 +28,10 @@ rotate show
 
 * Add an user
 ```
-rotate add hitochan
+rotate add user1 user2 user3
 ```
 
-* Delete an user
+* Delete an user (You cannot delete multiple users at the same time)
 ```
 rotate delete hitochan
 ```
