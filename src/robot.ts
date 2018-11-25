@@ -56,7 +56,7 @@ export class RequestHandler {
 
   @errorHandler
   addUsers(res: hubot.Response) {
-    const usernames = res.match.slice(1)
+    const usernames = res.match[1].trim().split(/\s+/)
     for (let username of usernames) {
       this.repo.addUser(res.envelope.room, username)
     }

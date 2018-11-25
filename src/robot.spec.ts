@@ -53,7 +53,7 @@ describe("RequestHandler", () => {
 
   it("adds an multiple users and notifies the room", () => {
     res = {
-      match: ["rotation add user1 user2 user3", "user1", "user2", "user3"],
+      match: ["rotation add user1 user2 user3", "user1  user2 user3"],
       reply: jest.fn(),
       send: jest.fn(),
       envelope: {
