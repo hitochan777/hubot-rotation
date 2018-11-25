@@ -1,4 +1,3 @@
-## 0.3.9
+## 0.4.7
 
-- Reply with date when `show` and `next` are called.
-
+- You can add multiple users with `add`
